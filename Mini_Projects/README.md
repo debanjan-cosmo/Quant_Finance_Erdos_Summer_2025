@@ -1,4 +1,3 @@
-
 # Quantitative Finance Mini Projects – Erdos Institute Summer 2025
 
 This repository contains a collection of four mini projects completed as part of the **"Introduction to Quantitative Methods in Finance"** course offered by the Erdős Institute in Summer 2025. Each project explores a core topic in quantitative finance using real financial data, simulation models, and statistical analysis. The projects are implemented in Python with modular, reusable code, and are presented through well-documented Jupyter notebooks.
@@ -7,7 +6,7 @@ This repository contains a collection of four mini projects completed as part of
 
 ### 1. Portfolio Optimization and Risk-Return Tradeoff  
 **Notebook**: `01_Portfolio_Optimization_Risk_Return_Analysis.ipynb`  
-**Module**: `portfolio_utils.py`  
+**Module**: `utils/portfolio_utils.py`  
 - Implements mean-variance optimization (Markowitz framework).  
 - Constructs low-risk, high-risk, and high-return portfolios.  
 - Analyzes return and volatility trade-offs using historical data.  
@@ -15,21 +14,21 @@ This repository contains a collection of four mini projects completed as part of
 
 ### 2. Normality Assumptions in Log Returns  
 **Notebook**: `02_Log_Return_Normality_Investigation.ipynb`  
-**Module**: `normality_utils.py`  
+**Module**: `utils/normality_utils.py`  
 - Examines if daily log returns of stocks follow a normal distribution.  
 - Uses Q-Q plots, histograms, and statistical tests (Shapiro-Wilk, Jarque-Bera).  
 - Discusses implications of non-normality for risk modeling and VaR estimation.
 
 ### 3. Sensitivity Analysis of Black-Scholes Option Pricing  
 **Notebook**: `03_Black_Scholes_Sensitivity_Analysis.ipynb`  
-**Module**: `options_utils.py`  
+**Module**: `utils/options_utils.py`  
 - Analyzes how call and put option prices vary with spot price, time to maturity, and volatility.  
 - Computes option Greeks and visualizes sensitivities.  
 - Builds intuition behind option pricing behavior under the Black-Scholes model.
 
 ### 4. Delta Hedging under Stochastic Volatility  
 **Notebook**: `04_Delta_Hedging_Stochastic_Volatility.ipynb`  
-**Module**: `hedging_utils.py`  
+**Module**: `utils/hedging_utils.py`  
 - Simulates stock paths using Heston and GARCH(1,1) models.  
 - Compares delta hedging performance under stochastic vs. constant volatility.  
 - Analyzes profit & loss (P&L) distributions and hedging errors.
@@ -44,10 +43,10 @@ Mini_Projects/
 ├── 03_Black_Scholes_Sensitivity_Analysis.ipynb
 ├── 04_Delta_Hedging_Stochastic_Volatility.ipynb
 │
-├── portfolio_utils.py
-├── normality_utils.py
-├── options_utils.py
-├── hedging_utils.py
+├── utils/portfolio_utils.py
+├── utils/normality_utils.py
+├── utils/options_utils.py
+├── utils/hedging_utils.py
 │
 ├── data/                      # Input datasets (CSV or downloaded data)
 └── portfolio_weights/         # Saved optimized portfolio weights
@@ -82,7 +81,7 @@ The project uses Python 3.8+ and the following key libraries:
 2. Open any of the four `.ipynb` notebooks.
 3. The notebooks are modular—functions are imported from `.py` files using:
    ```python
-   from portfolio_utils import *
+   from .utils.portfolio_utils import *
    ```
 4. You may edit or run them directly. Data is either downloaded using APIs (like `yfinance`) or provided in the `data/` folder.
 

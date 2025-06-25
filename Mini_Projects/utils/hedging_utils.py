@@ -1,4 +1,11 @@
-# Utility functions for Hedging Utils
+#Functions for hedging
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import norm
+
 
 def delta_call(S, K, sigma, t, r=0.02):
     """
@@ -64,6 +71,56 @@ def vega_call(S, K, sigma, t, r=0.02):
     d1 = (np.log(S/K) + (r + 0.5*sigma**2)*t) / (sigma * np.sqrt(t))
     return S * norm.pdf(d1) * np.sqrt(t)
 
+
+## Volatility Model 1: Custom Sigma Model
+##This model randomly selects volatility at each time step from a discrete distribution.
+def simulate_custom_sigma_paths(S0, mu, r, T, N, n_paths, sigma_choices=[0.2, 0.3, 0.45], 
+                               sigma_probs=[0.5, 0.3, 0.2]):
+    """
+    Simulate stock paths with custom random volatility selection
+    
+    Parameters:
+    S0 (float): Initial stock price
+    mu (float): Drift parameter
+    r (float): Risk-free rate
+    T (float): Time horizon
+    N (int): Number of time steps
+    n_paths (int): Number of simulation paths
+    sigma_choices (list): Available volatility values
+    sigma_probs (list): Probabilities for each volatility choice
+    
+    Returns:
+    tuple: (stock_paths, volatility_paths)
+    """
+    dt = T / N
+    stock_paths = []
+    volatility_paths = []
+    
+    for _ in range(n_paths):
+        # Initialize arrays
+        S = [S0]
+        sigmas = []
+        
+        for _ in range(N):
+            # Select random volatility
+            sigma = np.random.choice(sigma_choices, p=sigma_probs)
+            sigmas.append(sigma)
+            
+            # Generate stock price increment
+            dW = np.random.normal(0, np.sqrt(dt))
+            dS = (mu - 0.5 * sigma**2) * dt + sigma * dW
+            S_next = S[-1] * np.exp(dS)
+            S.append(S_next)
+        
+        stock_paths.append(S)
+        volatility_paths.append(sigmas)
+    
+    return np.array(stock_paths), np.array(volatility_paths)
+
+
+## Volatility Model 2: GARCH(1,1) Model
+## GARCH models capture volatility clustering - the tendency for high volatility periods to be followed by high volatility.
+
 def simulate_garch_paths(S0, mu, r, T, N, n_paths, sigma0=0.2, omega=0.0001, alpha=0.1, beta=0.8):
     """
     Simulate stock paths using GARCH(1,1) volatility model
@@ -113,6 +170,10 @@ def simulate_garch_paths(S0, mu, r, T, N, n_paths, sigma0=0.2, omega=0.0001, alp
         volatility_paths.append(sigmas)
     
     return np.array(stock_paths), np.array(volatility_paths)
+
+
+## Volatility Model 3: Heston Stochastic Volatility Model
+## The Heston model treats variance as a mean-reverting stochastic process.
 
 def simulate_heston_paths(S0, v0, mu, r, kappa, theta, xi, rho, T, N, n_paths):
     """
@@ -175,6 +236,10 @@ def simulate_heston_paths(S0, v0, mu, r, kappa, theta, xi, rho, T, N, n_paths):
     
     return np.array(stock_paths), np.array(volatility_paths)
 
+
+## Volatility Model 4: SABR Model
+##The SABR model is popular for modeling interest rates and FX volatility.
+
 def simulate_sabr_paths(F0, alpha0, beta, nu, rho, T, N, n_paths):
     """
     Simulate forward rate paths using SABR stochastic volatility model
@@ -227,6 +292,9 @@ def simulate_sabr_paths(F0, alpha0, beta, nu, rho, T, N, n_paths):
         volatility_paths.append(alpha)
     
     return np.array(forward_paths), np.array(volatility_paths)
+
+
+## Delta Hedging Implementation
 
 def delta_hedge_simulation(stock_paths, volatility_paths, K, r, T, verbose=False):
     """
@@ -284,6 +352,8 @@ def delta_hedge_simulation(stock_paths, volatility_paths, K, r, T, verbose=False
         profits.append(profit)
     
     return profits
+
+## Visualization Functions
 
 def plot_stock_paths(paths, title, n_display=10):
     """
@@ -371,13 +441,24 @@ def plot_profit_distribution(profits, model_name, show_stats=True):
               fontsize=16, fontweight='bold')
     plt.xlabel('Profit ($)', fontsize=12)
     plt.ylabel('Density', fontsize=12)
-    plt.legend(fontsize=10)
+    plt.legend(fontsize=15)
     plt.grid(True, alpha=0.3)
     
     if show_stats:
         # Add statistics text box
         stats_text = f'''Statistics:
-
+Mean: ${np.mean(profits):.2f}
+Std Dev: ${np.std(profits):.2f}
+Min: ${np.min(profits):.2f}
+Max: ${np.max(profits):.2f}
+Profitable: {np.sum(np.array(profits) > 0) / len(profits) * 100:.1f}%'''
+        
+        plt.text(0.02, 0.98, stats_text, transform=plt.gca().transAxes, 
+                verticalalignment='top', bbox=dict(boxstyle='round', 
+                facecolor='wheat', alpha=0.8), fontsize=15)
+    
+    plt.tight_layout()
+    plt.show()
 
 def compare_profit_distributions(profit_dict):
     """
@@ -386,7 +467,7 @@ def compare_profit_distributions(profit_dict):
     Parameters:
     profit_dict (dict): Dictionary with model names as keys and profits as values
     """
-    plt.figure(figsize=(15, 10))
+    plt.figure(figsize=(12, 10))
     
     colors = ['skyblue', 'lightcoral', 'lightgreen', 'plum', 'orange']
     
@@ -400,7 +481,7 @@ def compare_profit_distributions(profit_dict):
               fontsize=16, fontweight='bold')
     plt.xlabel('Profit ($)', fontsize=12)
     plt.ylabel('Density', fontsize=12)
-    plt.legend(fontsize=10)
+    plt.legend(fontsize=20)
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.show()

@@ -1,0 +1,32 @@
+---
+config:
+  theme: neo
+  look: neo
+  layout: elk
+---
+flowchart TD
+    A(["Start"]) --> B["Input: stock_paths, volatility_paths, K, r, T"]
+    B --> C["Initialize N steps, dt, and profits list"]
+    C --> D["Loop over each path"]
+    D --> E["Initialize cash and shares_held"] & K["Return profits"]
+    E --> F["Calculate initial option price"]
+    F --> G["Loop over time steps"]
+    G --> H["Update delta, rebalance portfolio, accrue interest"] & I["At expiry: calculate final portfolio value"]
+    H --> G
+    I --> J["Compute profit and append to list"]
+    J --> D
+    K --> L(["End"])
+    D@{ shape: diam}
+    G@{ shape: diam}
+    style A fill:#FFCDD2
+    style B fill:#BBDEFB
+    style C fill:#BBDEFB
+    style D fill:#E1BEE7
+    style E fill:#BBDEFB
+    style K fill:#BBDEFB
+    style F fill:#BBDEFB
+    style G fill:#E1BEE7
+    style H fill:#BBDEFB
+    style I fill:#BBDEFB
+    style J fill:#BBDEFB
+    style L fill:#FFCDD2

@@ -1,5 +1,9 @@
 # Utility functions for Options Utils
 
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
 def bs_call_price(S, K, sigma, T, r=0.0):
     """
     Computes the Black-Scholes price for a European call option.
